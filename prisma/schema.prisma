@@ -1,0 +1,53 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Get a free hosted Postgres database in seconds: `npx create-db`
+
+generator client {
+  provider = "prisma-client"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+model Jogo {
+  id          Int              @id @default(autoincrement())
+  titulo      String
+  personagem  Personagem[]
+  Conquistas  Conquistas[]
+  Plataformas JogoPlataforma[]
+}
+
+model Personagem {
+  id        Int    @id @default(autoincrement())
+  nome      String
+  jogo      Jogo   @relation(fields: [jogoId], references: [id])
+  jogoId    Int
+  atributos Json
+}
+
+model Plataforma {
+  id   Int              @id @default(autoincrement())
+  nome String
+  jogo JogoPlataforma[]
+}
+
+model JogoPlataforma {
+  jogo         Jogo       @relation(fields: [jogoId], references: [id])
+  jogoId       Int
+  plataforma   Plataforma @relation(fields: [plataformaId], references: [id])
+  plataformaId Int
+  lancamento   String?
+
+  @@id([jogoId, plataformaId])
+}
+
+model Conquistas {
+  id        Int    @id @default(autoincrement())
+  nome      String
+  jogo      Jogo   @relation(fields: [jogoId], references: [id])
+  jogoId    Int
+  descricao String
+}
